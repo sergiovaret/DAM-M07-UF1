@@ -13,12 +13,13 @@ class RocketsRepository(private val rocketDao: RocketDao) {
     val rockets: Flow<List<RocketEntity>> = rocketDao.getRockets()
 
     suspend fun refreshRockets() {
-        try {
-            val networkRockets = retrofitInstance.api.getRockets()
+        return try {
+            val localRockets = retrofitInstance.api.getRockets()
             rocketDao.deleteAllRockets()
-            rocketDao.insertAllRockets(networkRockets)
+            rocketDao.insertAllRockets(localRockets)
         } catch (e: Exception) {
             Log.e("RocketsRepository", "Error al refrescar los cohetes: ${e.message}")
+            throw e
         }
     }
 }

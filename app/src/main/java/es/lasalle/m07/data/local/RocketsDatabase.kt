@@ -9,7 +9,8 @@ import androidx.room.TypeConverters
     entities = [
         RocketEntity::class
     ],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class RocketsDatabase : RoomDatabase() {
