@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import es.lasalle.m07.data.local.RocketEntity
 import es.lasalle.m07.viewmodel.RocketsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,12 +36,11 @@ fun RocketsListScreen(
         }
     )  { padding ->
 
-        var showOnlyActive by remember { mutableStateOf(false) }
-        var searchText by remember { mutableStateOf("") }
-        val filteredRockets = rockets.filter { rocket ->
-            // 2. Se compara explícitamente con 'true' para manejar el caso nulo
-            (!showOnlyActive || rocket.active == true) &&
-            (searchText.isEmpty() || rocket.name.contains(searchText, ignoreCase = true))
+        var mostrarSoloActivos by remember { mutableStateOf(false) }
+        var buscar by remember { mutableStateOf("") }
+        val cohetesFiltrados = rockets.filter { rocket ->
+            (!mostrarSoloActivos || rocket.active == true) &&
+            (buscar.isEmpty() || rocket.name.contains(buscar, ignoreCase = true))
         }
 
         Column(
@@ -50,8 +48,8 @@ fun RocketsListScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedTextField(
-                value = searchText,
-                onValueChange = { searchText = it },
+                value = buscar,
+                onValueChange = { buscar = it },
                 label = { Text("Buscar por nombre") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -68,8 +66,8 @@ fun RocketsListScreen(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Switch(
-                    checked = showOnlyActive,
-                    onCheckedChange = { showOnlyActive = it }
+                    checked = mostrarSoloActivos,
+                    onCheckedChange = { mostrarSoloActivos = it }
                 )
             }
 
@@ -87,16 +85,15 @@ fun RocketsListScreen(
 
                             Spacer(Modifier.height(8.dp))
 
-                            // 3. Se llama a la función correcta en el botón de reintentar
-                            Button(onClick = { viewModel.refreshRockets() }) { 
+                            Button(onClick = { viewModel.refreshRockets() }) {
                                 Text("Reintentar")
                             }
                         }
-                    filteredRockets.isEmpty() && !loading ->
+                    cohetesFiltrados.isEmpty() && !loading ->
                         Text("No se encontraron cohetes", Modifier.align(Alignment.Center))
                     else ->
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            items(filteredRockets) { rocket ->
+                            items(cohetesFiltrados) { rocket ->
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -107,7 +104,6 @@ fun RocketsListScreen(
                                         modifier = Modifier.padding(16.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        // 4. Acceso seguro a la lista de imágenes, que ahora puede ser nula
                                         val imageUrl = rocket.flickr_images?.firstOrNull()
                                             ?: "https://via.placeholder.com/64"
 
@@ -121,10 +117,10 @@ fun RocketsListScreen(
 
                                         Text(rocket.name)
                                     }
-                                }
-                            }
-                    }
-                }
+                                } // end-card
+                            }  // end-items
+                        } // end-lazycolumn
+                } // end-when
 
                 Button(
                     onClick = onLogout,
@@ -135,7 +131,7 @@ fun RocketsListScreen(
                     Text("Cerrar sesión")
                 }
 
-            }
-        }
-    }
-}
+            } // end-box
+        } // end-column
+    } // end-scaffold
+} // end-fun

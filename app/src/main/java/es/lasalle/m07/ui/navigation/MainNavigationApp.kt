@@ -25,7 +25,7 @@ fun MainNavigationApp() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.Splash.route
+        startDestination = Routes.RocketsList.route
     ) {
 
         composable(Routes.Splash.route) {

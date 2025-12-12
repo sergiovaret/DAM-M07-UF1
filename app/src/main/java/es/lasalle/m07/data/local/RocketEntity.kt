@@ -1,6 +1,5 @@
 package es.lasalle.m07.data.local
 
-
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 @Entity(tableName = "rockets")
