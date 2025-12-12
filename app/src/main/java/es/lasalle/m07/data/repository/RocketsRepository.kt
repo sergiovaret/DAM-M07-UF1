@@ -13,7 +13,7 @@ class RocketsRepository(private val rocketDao: RocketDao) {
     val rockets: Flow<List<RocketEntity>> = rocketDao.getRockets()
 
     suspend fun refreshRockets() {
-        return try {
+        try {
             val localRockets = retrofitInstance.api.getRockets()
             rocketDao.deleteAllRockets()
             rocketDao.insertAllRockets(localRockets)
